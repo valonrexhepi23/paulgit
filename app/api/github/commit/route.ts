@@ -1,4 +1,3 @@
-// app/api/github/commit/route.ts
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -19,14 +18,12 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Get GitHub access token
         const response = await (await clerkClient()).users.getUserOauthAccessToken(
             userId,
             "github"
         );
         const token = response.data[0].token;
 
-        // Get user info to get username
         const githubUserResponse = await fetch("https://api.github.com/user", {
             headers: {
                 Authorization: `token ${token}`,
@@ -37,7 +34,6 @@ export async function POST(request: NextRequest) {
         const userData = await githubUserResponse.json();
         const username = userData.login;
 
-        // First, check if the repository exists
         const repoResponse = await fetch(
             `https://api.github.com/repos/${username}/${username}`,
             {
@@ -48,7 +44,6 @@ export async function POST(request: NextRequest) {
             }
         );
 
-        // If repository doesn't exist, create it
         if (repoResponse.status === 404) {
             const createRepoResponse = await fetch(
                 "https://api.github.com/user/repos",
@@ -76,11 +71,9 @@ export async function POST(request: NextRequest) {
                 );
             }
 
-            // Wait a moment for the repository to be fully created
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
 
-        // Get current file SHA (if it exists) for updating
         let currentSha = null;
         const currentFileResponse = await fetch(
             `https://api.github.com/repos/${username}/${username}/contents/README.md`,
@@ -97,18 +90,15 @@ export async function POST(request: NextRequest) {
             currentSha = currentFileData.sha;
         }
 
-        // Prepare the commit data
         const commitData: any = {
             message: commitMessage,
             content: Buffer.from(content).toString("base64"),
         };
 
-        // If file exists, include the SHA for updating
         if (currentSha) {
             commitData.sha = currentSha;
         }
 
-        // Create or update the README.md file
         const updateResponse = await fetch(
             `https://api.github.com/repos/${username}/${username}/contents/README.md`,
             {
