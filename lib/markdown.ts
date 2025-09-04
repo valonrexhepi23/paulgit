@@ -33,8 +33,6 @@ const preprocessTaskLists = (markdown: string): { processed: string, taskListPla
             .join("\n");
 
         const taskListHtml = `<ul data-type="taskList">${items}</ul>`;
-        console.log("taskListHtml", taskListHtml);
-
         const placeholder = `<p>TASKLIST_PLACEHOLDER_${placeholderCount++}</p>`;
         taskListPlaceholders.push({ placeholder, html: taskListHtml });
 
@@ -70,8 +68,6 @@ export const convertMarkdownToHtml = async (content: string) => {
     }
 
     try {
-        console.log("content", content);
-
         const { processed, taskListPlaceholders } = preprocessTaskLists(content);
 
         const html = await marked.parse(processed);

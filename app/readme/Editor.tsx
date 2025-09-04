@@ -11,12 +11,14 @@ import { ListKit } from "@tiptap/extension-list";
 import MenuBar from "./MenuBar";
 import { turndownService } from "@/lib/turndown";
 import { convertMarkdownToHtml } from "@/lib/markdown";
+import { useReadmeContext } from "./ReadmeContext";
+import Bubble from "./BubbleMenu";
 
 export default function Writing({ content }: { content: string }) {
-  const [htmlContent, setHtmlContent] = useState("");
   const [originalMarkdown, setOriginalMarkdown] = useState("");
   const [isCommitDialogOpen, setIsCommitDialogOpen] = useState(false);
   const [isCommitting, setIsCommitting] = useState(false);
+  const { htmlContent, setHtmlContent } = useReadmeContext();
 
   useEffect(() => {
     const processContent = async () => {
@@ -67,7 +69,6 @@ export default function Writing({ content }: { content: string }) {
   const getCurrentMarkdown = () => {
     if (!editor) return "";
     const htmlContent = editor.getHTML();
-    console.log(htmlContent);
 
     return turndownService.turndown(htmlContent);
   };
@@ -115,10 +116,10 @@ export default function Writing({ content }: { content: string }) {
   }
 
   return (
-    <div className="rounded-lg">
+    <div className="rounded-lg p-6">
       <div className="sticky py-3 flex gap-2 flex-wrap bg-white border-[0.5px] border-gray-300 my-2 px-4 rounded-md">
         <MenuBar editor={editor!} />
-
+        {editor && <Bubble editor={editor} />}
         <button
           onClick={handleSave}
           disabled={isCommitting}

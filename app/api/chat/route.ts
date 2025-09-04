@@ -3,6 +3,7 @@ import {
     convertToModelMessages,
     createUIMessageStream,
     createUIMessageStreamResponse,
+    streamObject,
     streamText,
     tool,
 } from 'ai';
@@ -16,8 +17,8 @@ export async function POST(req: Request) {
             // step 1 example: forced tool call
             const result1 = streamText({
                 model: openai('gpt-4o-mini'),
-                system: 'Extract the user goal from the conversation.',
-                messages,
+                system: 'Create a 5. step plan to create the project.',
+                messages: convertToModelMessages(messages),
                 toolChoice: 'required', // force the model to call a tool
                 tools: {
                     extractGoal: tool({
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
                 // different system prompt, different model, no tools:
                 model: openai('gpt-4o'),
                 system:
-                    'You are a helpful assistant with a different system prompt. Repeat the extract user goal in your answer.',
+                    'You are a helpful assistant with a different system prompt. You create a 10 word description for every project step.',
                 // continue the workflow stream with the messages from the previous step:
                 messages: [
                     ...convertToModelMessages(messages),
@@ -48,6 +49,23 @@ export async function POST(req: Request) {
 
             // forward the 2nd result to the client (incl. the finish event):
             writer.merge(result2.toUIMessageStream({ sendStart: false }));
+
+
+            const result3 = streamObject({
+                system: "",
+                model: openai("gpt-4o-mini"),
+                messages: [
+                    ...convertToModelMessages(messages),
+                    ...(await result1.response).messages,
+                    ...(await result2.response).messages,
+                ],
+                schema: z.object({
+                    definition: z.string().describe("A description describing the goals."),
+                    markdown: z.string().describe("A markdown of the goals")
+                })
+            })
+
+
         },
     });
 

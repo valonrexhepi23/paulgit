@@ -11,6 +11,10 @@ import {
   SquareTerminal,
   TextQuote,
   ListTodoIcon,
+  Heading1Icon,
+  Heading2Icon,
+  Heading3Icon,
+  Heading4Icon,
 } from "lucide-react";
 
 export default function MenuBar({ editor }: { editor: Editor }) {
@@ -82,6 +86,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         >
           <ItalicIcon className="size-4" />
         </button>
+
         <button
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editorState.canStrike}
@@ -93,6 +98,56 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         >
           <StrikethroughIcon className="size-4" />
         </button>
+
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
+          className={`${
+            editorState.isHeading1
+              ? "opacity-100 menu-item"
+              : "opacity-50 menu-item-not"
+          }`}
+        >
+          <Heading1Icon className="size-4" />
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          className={`${
+            editorState.isHeading2
+              ? "opacity-100 menu-item"
+              : "opacity-50 menu-item-not"
+          }`}
+        >
+          <Heading2Icon className="size-4" />
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          className={`${
+            editorState.isHeading3
+              ? "opacity-100 menu-item"
+              : "opacity-50 menu-item-not"
+          }`}
+        >
+          <Heading3Icon className="size-4" />
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 4 }).run()
+          }
+          className={`${
+            editorState.isHeading4
+              ? "opacity-100 menu-item"
+              : "opacity-50 menu-item-not"
+          }`}
+        >
+          <Heading4Icon className="size-4" />
+        </button>
+
         <button
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={!editorState.canCode}

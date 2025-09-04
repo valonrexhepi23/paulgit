@@ -5,9 +5,11 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import Chat from "./Chat";
+import ChatPanel from "./ChatPanel";
+import TopChatBar from "@/components/TopChatBar";
+import Chat from "@/components/Chat";
 
-export default async function ReadMe() {
+export default async function ReadMePage() {
   const user = await currentUser();
   if (!user) {
     return <div>Please sign in</div>;
@@ -33,7 +35,6 @@ export default async function ReadMe() {
     const userData = await githubUserResponse.json();
     const username = userData.login;
 
-    // Get the profile README from the special repository (username/username)
     const readmeResponse = await fetch(
       `https://api.github.com/repos/${username}/${username}/contents/README.md`,
       {
@@ -55,11 +56,9 @@ export default async function ReadMe() {
       );
       readmeExists = true;
     } else if (readmeResponse.status === 404) {
-      // README doesn't exist yet
       readmeExists = false;
       readmeContent = "No profile README found. Would you like to create one?";
     } else {
-      // Some other error
       throw new Error(`GitHub API error: ${readmeResponse.status}`);
     }
 
@@ -74,15 +73,21 @@ export default async function ReadMe() {
               maxSize={40}
               collapsible
             >
-              <Chat />
+              <ChatPanel>
+                <TopChatBar
+                  userName={username}
+                  userImgUrl={user.imageUrl}
+                  repositoryName={username}
+                />
+                <Chat />
+              </ChatPanel>
             </ResizablePanel>
-            <ResizableHandle />
+            <ResizableHandle withHandle />
             <ResizablePanel
               defaultSize={70}
-              minSize={50}
+              minSize={40}
               collapsedSize={0}
               collapsible
-              className="p-6"
             >
               <Editor content={readmeContent} />
             </ResizablePanel>
