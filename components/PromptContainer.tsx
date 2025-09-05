@@ -1,6 +1,7 @@
 "use client";
 
 import { useReadmeContext } from "@/app/readme/ReadmeContext";
+import { turndownService } from "@/lib/turndown";
 import { useChat } from "@ai-sdk/react";
 import {
   Tooltip,
@@ -13,18 +14,22 @@ import { useState } from "react";
 
 export default function PromptContainer() {
   const [input, setInput] = useState("");
-  const { context, setContext, htmlContent } = useReadmeContext();
-  const { sendMessage } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-    }),
-  });
+  const { context, setContext, htmlContent, sendMessage } = useReadmeContext();
   const handleSubmit = (e) => {
     e.preventDefault();
-    sendMessage({
-      text: input,
-    });
+    sendMessage(
+      {
+        text: input,
+      },
+      {
+        body: {
+          context: context,
+          content: htmlContent,
+        },
+      }
+    );
     setInput("");
+    setContext("");
   };
   return (
     <div className="h-50 items-center shrink-0 flex flex-col px-4 pt-4">
@@ -46,7 +51,9 @@ export default function PromptContainer() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="max-w-30 flex items-center p-1 border rounded-sm bg-gray-100 text-gray-700 shadow-xs">
-                        <div className="text-xs truncate">{context}</div>
+                        <div className="text-xs truncate">
+                          {turndownService.turndown(context)}
+                        </div>
                         <button
                           onClick={() => setContext("")}
                           className="hover:text-red-500 transition-color duration-300"
