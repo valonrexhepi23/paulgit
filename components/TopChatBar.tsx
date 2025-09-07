@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DashboardButton from "./DashboardButton";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 
 interface TopChatBarInterface {
   userName: string;
@@ -42,7 +44,15 @@ export default function TopChatBar({
           <DropdownMenuItem>
             <DashboardButton />
           </DropdownMenuItem>
-          <DropdownMenuItem>Checkout</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link
+              href={`https://github.com/${userName}`}
+              target="_blank"
+              className="flex items-center gap-2"
+            >
+              Profile <ExternalLink className="size-3" />
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="tracking-tight">
             <SignOutButton />

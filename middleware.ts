@@ -1,6 +1,34 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server';
 
-export default clerkMiddleware();
+
+const isOnboardingRoute = createRouteMatcher(['/onboarding'])
+
+
+const isProtectedRoute = createRouteMatcher([
+    '/dashboard(.*)',
+    '/readme(.*)',
+    '/api(.*)', // Protect all API routes
+])
+
+export default clerkMiddleware(async (auth, req) => {
+    const { userId, sessionClaims, redirectToSignIn } = await auth();
+
+    if (userId && isOnboardingRoute(req)) {
+        return NextResponse.next();
+    }
+
+    if (!userId && isProtectedRoute(req)) return redirectToSignIn({ returnBackUrl: req.url })
+
+    if (isProtectedRoute(req)) await auth.protect();
+    if (req.nextUrl.pathname === '/' && userId) {
+        const url = req.nextUrl.clone();
+        url.pathname = '/docs';
+        return NextResponse.redirect(url);
+    }
+
+    return NextResponse.next();
+})
 
 export const config = {
     matcher: [
@@ -9,4 +37,4 @@ export const config = {
         // Always run for API routes
         '/(api|trpc)(.*)',
     ],
-};
+}
