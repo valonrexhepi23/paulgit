@@ -8,7 +8,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import DashboardButton from "./DashboardButton";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
@@ -40,10 +39,6 @@ export default function TopChatBar({
           <DropdownMenuLabel className="text-xs text-gray-400">
             Account
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <DashboardButton />
-          </DropdownMenuItem>
           <DropdownMenuItem>
             <Link
               href={`https://github.com/${userName}`}

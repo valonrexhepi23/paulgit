@@ -48,7 +48,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
   });
 
   return (
-    <>
+    <div className="flex items-center gap-2">
       <button
         onClick={() => editor.chain().focus().undo().run()}
         disabled={!editorState.canUndo}
@@ -211,6 +211,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
           <ListTodoIcon className="size-4" />
         </button>
       </div>
-    </>
+    </div>
   );
 }

@@ -13,6 +13,7 @@ import { turndownService } from "@/lib/turndown";
 import { convertMarkdownToHtml } from "@/lib/markdown";
 import { useReadmeContext } from "./ReadmeContext";
 import Bubble from "./BubbleMenu";
+import { GitPullRequestArrow } from "lucide-react";
 
 export default function Writing({ content }: { content: string }) {
   const [originalMarkdown, setOriginalMarkdown] = useState("");
@@ -117,18 +118,18 @@ export default function Writing({ content }: { content: string }) {
 
   return (
     <div className="rounded-lg p-6">
-      <div className="sticky py-3 flex gap-2 flex-wrap bg-white border-[0.5px] border-gray-300 my-2 px-4 rounded-md">
+      <div className="sticky py-3 flex gap-2 flex-wrap bg-white border-[0.5px] border-gray-300 my-2 px-4 rounded-md justify-between">
         <MenuBar editor={editor!} />
-        {editor && <Bubble editor={editor} />}
         <button
           onClick={handleSave}
           disabled={isCommitting}
           className="px-3 py-1 rounded text-sm disabled:opacity-50 hover:bg-gray-100 flex items-center gap-1 transition-color duration-200 text-gray-500 hover:text-black"
         >
-          Commit
+          <GitPullRequestArrow className="size-4" /> Commit
         </button>
       </div>
 
+      {editor && <Bubble editor={editor} />}
       <div className="overflow-auto max-h-[calc(100vh-20vh)] border-[0.5px] border-gray-300 rounded-md">
         <DragHandle editor={editor!}>
           <svg

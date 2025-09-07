@@ -6,7 +6,6 @@ const isOnboardingRoute = createRouteMatcher(['/onboarding'])
 
 
 const isProtectedRoute = createRouteMatcher([
-    '/dashboard(.*)',
     '/readme(.*)',
     '/api(.*)', // Protect all API routes
 ])
@@ -23,7 +22,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (isProtectedRoute(req)) await auth.protect();
     if (req.nextUrl.pathname === '/' && userId) {
         const url = req.nextUrl.clone();
-        url.pathname = '/docs';
+        url.pathname = '/readme';
         return NextResponse.redirect(url);
     }
 

@@ -1,4 +1,3 @@
-import { openai } from '@ai-sdk/openai';
 import {
     convertToModelMessages,
     createUIMessageStream,
@@ -8,6 +7,10 @@ import {
     tool,
 } from 'ai';
 import { z } from 'zod';
+import { createAzure } from '@ai-sdk/azure';
+
+const azure = createAzure()
+
 
 function sanitizedMessage(messages: any[]) {
     return messages.map(message => {
@@ -51,7 +54,7 @@ export async function POST(req: Request) {
 
             // Step 2: Context-aware README processing
             const result2 = streamText({
-                model: openai('gpt-4o-mini'),
+                model: azure.responses('gpt-4.1'),
                 system: `You are a precision README editor. Your task is to analyze the editing scenario and execute the appropriate action.
 
 EDITING SCENARIOS:
@@ -200,7 +203,7 @@ Generate a README that makes a strong first impression and effectively showcases
                             }
 
                             const resultObject = await generateObject({
-                                model: openai("gpt-4o"),
+                                model: azure.responses("gpt-4.1"),
                                 schema: readmeSchema,
                                 system: systemPrompt,
                                 prompt: userPrompt,
